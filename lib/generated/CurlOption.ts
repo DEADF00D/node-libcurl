@@ -814,6 +814,13 @@ export interface CurlOption {
   readonly MAXFILESIZE_LARGE: 'MAXFILESIZE_LARGE'
 
   /**
+   * Limit the age (since creation) of connections for reuse.
+   *
+   * Official libcurl documentation: : [https://curl.haxx.se/libcurl/c/CURLOPT_MAXLIFETIME_CONN.html](https://curl.haxx.se/libcurl/c/CURLOPT_MAXLIFETIME_CONN.html)
+   */
+  readonly MAXLIFETIME_CONN: 'MAXLIFETIME_CONN'
+
+  /**
    * Maximum number of redirects to follow.
    *
    * Official libcurl documentation: : [https://curl.haxx.se/libcurl/c/CURLOPT_MAXREDIRS.html](https://curl.haxx.se/libcurl/c/CURLOPT_MAXREDIRS.html)
@@ -2647,6 +2654,13 @@ export const CurlOptionCamelCaseMap = {
   maxFileSizeLarge: 'MAXFILESIZE_LARGE',
 
   /**
+   * Limit the age (since creation) of connections for reuse.
+   *
+   * Official libcurl documentation: : [https://curl.haxx.se/libcurl/c/CURLOPT_MAXLIFETIME_CONN.html](https://curl.haxx.se/libcurl/c/CURLOPT_MAXLIFETIME_CONN.html)
+   */
+  maxLifetimeConn: 'MAXLIFETIME_CONN',
+
+  /**
    * Maximum number of redirects to follow.
    *
    * Official libcurl documentation: : [https://curl.haxx.se/libcurl/c/CURLOPT_MAXREDIRS.html](https://curl.haxx.se/libcurl/c/CURLOPT_MAXREDIRS.html)
@@ -3818,6 +3832,7 @@ export type CurlOptionName =
   | 'MAXCONNECTS'
   | 'MAXFILESIZE'
   | 'MAXFILESIZE_LARGE'
+  | 'MAXLIFETIME_CONN'
   | 'MAXREDIRS'
   | 'NETRC'
   | 'NETRC_FILE'
@@ -5643,6 +5658,20 @@ export type CurlOptionValueType = {
    * Official libcurl documentation: : [https://curl.haxx.se/libcurl/c/CURLOPT_MAXFILESIZE_LARGE.html](https://curl.haxx.se/libcurl/c/CURLOPT_MAXFILESIZE_LARGE.html)
    */
   maxFileSizeLarge?: string | number | boolean | null
+
+  /**
+   * Limit the age (since creation) of connections for reuse.
+   *
+   * Official libcurl documentation: : [https://curl.haxx.se/libcurl/c/CURLOPT_MAXLIFETIME_CONN.html](https://curl.haxx.se/libcurl/c/CURLOPT_MAXLIFETIME_CONN.html)
+   */
+  MAXLIFETIME_CONN?: string | number | boolean | null
+
+  /**
+   * Limit the age (since creation) of connections for reuse.
+   *
+   * Official libcurl documentation: : [https://curl.haxx.se/libcurl/c/CURLOPT_MAXLIFETIME_CONN.html](https://curl.haxx.se/libcurl/c/CURLOPT_MAXLIFETIME_CONN.html)
+   */
+  maxLifetimeConn?: string | number | boolean | null
 
   /**
    * Maximum number of redirects to follow.
