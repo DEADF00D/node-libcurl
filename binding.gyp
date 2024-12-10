@@ -11,7 +11,7 @@
     'curl_static_build%': 'true',
     'curl_config_bin%': '/build/install/bin/curl-impersonate-chrome-config',
     'node_libcurl_no_setlocale%': 'false',
-    'node_libcurl_cpp_std%': '<!(node <(module_root_dir)/scripts/cpp-std.js)',
+    'node_libcurl_cpp_std%': '<!(node <(module_root_dir)/scripts/cpp-std.js <(node_root_dir))',
     'macos_universal_build%': 'false',
     'module_name': 'node_libcurl-impersonate',
     'module_path': './lib/binding/'
