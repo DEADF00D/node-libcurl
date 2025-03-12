@@ -120,10 +120,9 @@ fi
 echo "Using source"
 $curr_dirname/download-and-unpack.sh \
       https://github.com/lwthiker/curl-impersonate/archive/refs/tags/v0.6.1.tar.gz \
-      $2
+      deps/libcurlimpersonate
 
-mv $2/curl-impersonate-0.6.1 $2/source/$1
-cd $2/source/$1
+cd deps/libcurlimpersonate/curl-impersonate-0.6.1
 
 mkdir build && cd build
 ../configure
