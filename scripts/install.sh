@@ -15,7 +15,7 @@ mkdir build && cd build
 ../configure --prefix `pwd`/../../../output
 # Build and install the Chrome version
 make chrome-build
-sudo make chrome-install
+make chrome-install
 
 curl_chrome116 --version
 curl-impersonate-chrome-config --version
