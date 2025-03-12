@@ -121,7 +121,8 @@
               'include_dirs' : [
                 # '<!@(node "<(module_root_dir)/scripts/curl-config.js" --cflags | sed "s/-D.* //g" | sed s/-I//g)'
                 '<!(<(curl_config_bin) --prefix)/include',
-                'curl-impersonate/build/curl-8.1.1/include/'
+                # 'curl-impersonate/build/curl-8.1.1/include/'
+                'deps/libcurl/source/8.12.1/curl-impersonate-0.6.1/build/curl-8.1.1/include/'
               ],
             }],
           ],
