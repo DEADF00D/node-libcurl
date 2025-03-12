@@ -117,25 +117,19 @@ if [ "$(uname)" == "Darwin" ]; then
   fi
 fi
 
-###################
-# Build libcurl
-###################
-LIBCURL_ORIGINAL_RELEASE=${LIBCURL_RELEASE:-LATEST}
-LATEST_LIBCURL_RELEASE=${LATEST_LIBCURL_RELEASE:-$(./scripts/ci/get-latest-libcurl-version.sh)}
-LIBCURL_RELEASE=$LIBCURL_ORIGINAL_RELEASE
-if [[ $LIBCURL_RELEASE == "LATEST" ]]; then
-  LIBCURL_RELEASE=$LATEST_LIBCURL_RELEASE
-fi
-LIBCURL_DEST_FOLDER=$PREFIX_DIR/deps/libcurl
-echo "Building libcurl v$LIBCURL_RELEASE - Latest is v$LATEST_LIBCURL_RELEASE"
-./scripts/ci/build-libcurl.sh $LIBCURL_RELEASE $LIBCURL_DEST_FOLDER || (echo "libcurl failed build log:" && cat_slower $LIBCURL_DEST_FOLDER/source/$LIBCURL_RELEASE/config.log && exit 1)
-echo "libcurl successful build log:"
-cat_slower $LIBCURL_DEST_FOLDER/source/$LIBCURL_RELEASE/config.log
+echo "Using source"
+$curr_dirname/download-and-unpack.sh \
+      https://github.com/lwthiker/curl-impersonate/archive/refs/tags/v0.6.1.tar.gz \
+      $2
 
-export LIBCURL_BUILD_FOLDER=$LIBCURL_DEST_FOLDER/build/$LIBCURL_RELEASE
-ls -al $LIBCURL_BUILD_FOLDER/lib
-export PATH=$LIBCURL_DEST_FOLDER/build/$LIBCURL_RELEASE/bin:$PATH
-export LIBCURL_RELEASE=$LIBCURL_RELEASE
+mv $2/curl-impersonate-0.6.1 $2/source/$1
+cd $2/source/$1
+
+mkdir build && cd build
+../configure
+# Build and install the Chrome version
+make chrome-build
+sudo make chrome-install
 
 curl_chrome116 --version
 curl-impersonate-chrome-config --version
