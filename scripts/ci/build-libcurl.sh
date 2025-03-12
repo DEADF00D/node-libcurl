@@ -54,7 +54,7 @@ if [ ! -d $2/source/$1 ]; then
   if [ "$is_less_than_7_54_0" == "1" ]; then
     echo "Using source tarball instead of release because this libcurl version does not have releases"
     $curr_dirname/download-and-unpack.sh \
-      https://github.com/curl/curl/archive/curl-$version_with_dashes.tar.gz \
+      https://github.com/lwthiker/curl-impersonate/releases/download/v0.6.1/curl-impersonate-v0.6.1.x86_64-linux-gnu.tar.gz \
       $2
 
     mv $2/curl-curl-$version_with_dashes $2/source/$1
@@ -66,7 +66,7 @@ if [ ! -d $2/source/$1 ]; then
     echo "Using release tarball"
 
     $curr_dirname/download-and-unpack.sh \
-      https://github.com/curl/curl/releases/download/curl-$version_with_dashes/curl-$1.tar.gz \
+      https://github.com/lwthiker/curl-impersonate/archive/refs/tags/v0.6.1.tar.gz \
       $2
 
     mv $2/curl-$1 $2/source/$1
@@ -263,23 +263,27 @@ export LIBS=$LIBS
 export CPPFLAGS=$CPPFLAGS
 export LDFLAGS=$LDFLAGS
 
+mkdir build && cd build
+../configure
+# Build and install the Chrome version
+make chrome-build
+sudo make chrome-install
+
 # Debug
     # --enable-debug \
 
 # Release - Static
-./configure \
-    --enable-debug \
-    --without-nss \
-    --without-libpsl \
-    --without-librtmp \
-    --without-libidn \
-    --disable-manual \
-    --disable-shared \
-    --prefix=$build_folder \
-    "${libcurl_args[@]}" \
-    "${@:3}"
+#./configure \
+#    --enable-debug \
+#    --without-nss \
+#    --without-libpsl \
+#    --without-librtmp \
+#    --without-libidn \
+#    --disable-manual \
+#    --disable-shared \
+#    --prefix=$build_folder \
+#    "${libcurl_args[@]}" \
+#    "${@:3}"
     
 # Release - Both
-
-
-make && make install
+# make && make install
