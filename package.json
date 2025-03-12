@@ -8,15 +8,16 @@
     "libcurl",
     "node-libcurl",
     "axios",
-    "request"
+    "request",
+    "curl-impersonate"
   ],
-  "homepage": "https://github.com/JCMais/node-libcurl",
+  "homepage": "https://github.com/SwapnilSoni1999/node-libcurl",
   "bugs": {
-    "url": "https://github.com/JCMais/node-libcurl/issues"
+    "url": "https://github.com/SwapnilSoni1999/node-libcurl/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/JCMais/node-libcurl.git"
+    "url": "git://github.com/SwapnilSoni1999/node-libcurl.git"
   },
   "license": "MIT",
   "author": "Jonathan Cardoso <me@jonathancardoso.com>",
@@ -31,7 +32,7 @@
     "LIBCURL_VERSION_WIN_DEPS"
   ],
   "binary": {
-    "module_name": "node_libcurl",
+    "module_name": "node_libcurl-impersonate",
     "module_path": "./lib/binding/",
     "remote_path": "./v{version}/",
     "package_name": "{module_name}-v{version}-{node_abi}-{platform}-{arch}-{libc}.tar.gz",

@@ -50,6 +50,29 @@ const retrieveConstantList = async ({ url, constantPrefix, blacklist }) => {
     .get()
     .sort((a, b) => a.constantName.localeCompare(b.constantName))
     .filter((item) => !blacklist.includes(item.constantOriginal))
+    .concat(
+      /**
+       * curl-impersonate new options
+       */
+      [
+        {
+          constantOriginal: 'CURLOPT_SSL_CERT_COMPRESSION',
+          constantName: 'SSL_COMPRESSION',
+          constantNameCamelCase: 'sslCompression',
+          description: '(curl-impersonate) SSL Compression type. Eg. brotli',
+          url:
+            'https://github.com/lwthiker/curl-impersonate/blob/main/chrome/patches/curl-impersonate.patch#L125',
+        },
+        {
+          constantOriginal: 'CURLOPT_SSL_ENABLE_ALPS',
+          constantName: 'SSL_ENABLE_ALPS',
+          constantNameCamelCase: 'sslEnableAlps',
+          description: '(curl-impersonate) TLS Client hello match Extension',
+          url:
+            'https://github.com/lwthiker/curl-impersonate/blob/main/chrome/patches/curl-impersonate.patch#L119',
+        },
+      ],
+    )
 }
 
 module.exports = {

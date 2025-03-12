@@ -35,6 +35,7 @@ const run = async () => {
     constantPrefix: 'CURLOPT_',
     blacklist: curlOptionsBlacklist,
   })
+
   await createConstantsFile({
     constants: allowedCurlOptions,
     variableName: 'CurlOption',
@@ -81,6 +82,7 @@ const run = async () => {
       'REDIRECT',
     ],
   })
+
   await createConstantsFile({
     constants: allowedCurlInfos,
     variableName: 'CurlInfo',

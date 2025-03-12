@@ -3,16 +3,18 @@
   #  npm install --curl-extra_link_args=true
   # or if using yarn:
   #  npm_config_curl_extra_link_args=true yarn install
-  # 
+  #
   'variables': {
     # Comma separated list
     'curl_include_dirs%': '',
     'curl_libraries%': '',
-    'curl_static_build%': 'false',
-    'curl_config_bin%': 'node <(module_root_dir)/scripts/curl-config.js',
+    'curl_static_build%': 'true',
+    'curl_config_bin%': '/build/install/bin/curl-impersonate-chrome-config',
     'node_libcurl_no_setlocale%': 'false',
     'node_libcurl_cpp_std%': '<!(node <(module_root_dir)/scripts/cpp-std.js <(node_root_dir))',
     'macos_universal_build%': 'false',
+    'module_name': 'node_libcurl-impersonate',
+    'module_path': './lib/binding/'
   },
   'targets': [
     {
@@ -44,7 +46,7 @@
           'libraries': ['<@(curl_libraries)']
         }],
         # Windows is only build statically
-        # In the future we can add support for other build types 
+        # In the future we can add support for other build types
         ['OS=="win"', {
           'msvs_settings': {
             'VCCLCompilerTool': {
