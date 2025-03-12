@@ -83,17 +83,13 @@ PIP=${PIP:-$(command -v pip || command -v pip3)}
 # install setuptools if distutils cannot be imported on python
 $PYTHON -c "import distutils" || $PIP install setuptools
 
-# on gh actions it is including this file for some reason: /usr/local/include/nghttp2/nghttp2.h:55:
-# so we are making sure we remove those so they do not mess with our build
-if [[ -n "$CI" && "$(uname)" == "Darwin" && -d "/usr/local/include" ]]; then
-  echo "include folder:"
-  ls -al /usr/local/include
-  echo "lib folder:"
-  ls -al /usr/local/lib
-  # delete all libraries we are building on this file from /usr/local/lib
-  rm -rf /usr/local/include/{nghttp2,openssl,curl}
-  rm -rf     /usr/local/lib/{nghttp2,openssl,curl}
-fi
+echo "include folder:"
+ls -al /usr/local/include
+echo "lib folder:"
+ls -al /usr/local/lib
+# delete all libraries we are building on this file from /usr/local/lib
+rm -rf /usr/local/include/{nghttp2,openssl,curl}
+rm -rf /usr/local/lib/{nghttp2,openssl,curl}
 
 # check for some common missing deps
 if [ "$(uname)" == "Darwin" ]; then
