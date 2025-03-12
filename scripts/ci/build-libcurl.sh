@@ -18,7 +18,7 @@ FORCE_REBUILD_LIBCURL=${FORCE_REBUILD_LIBCURL:-}
 # @TODO We are explicitly checking the static lib
 if [[ -f $build_folder/lib/libcurl.a ]] && [[ -z $FORCE_REBUILD || $FORCE_REBUILD != "true" ]] && [[ -z $FORCE_REBUILD_LIBCURL || $FORCE_REBUILD_LIBCURL != "true" ]]; then
   echo "Skipping rebuild of libcurl because lib file already exists"
-  exit 0
+  # exit 0
 fi
 
 version_with_dashes=$(echo $1 | sed 's/\./_/g')
@@ -51,27 +51,15 @@ is_less_than_7_54_0=0
 (printf '%s\n%s' "7.54.0" "$1" | $gsort -CV) || is_less_than_7_54_0=$?
 
 if [ ! -d $2/source/$1 ]; then
-  if [ "$is_less_than_7_54_0" == "1" ]; then
-    echo "Using source tarball instead of release because this libcurl version does not have releases"
+  echo "Using source"
     $curr_dirname/download-and-unpack.sh \
-      https://github.com/lwthiker/curl-impersonate/releases/download/v0.6.1/curl-impersonate-v0.6.1.x86_64-linux-gnu.tar.gz \
+      https://github.com/lwthiker/curl-impersonate/archive/refs/tags/v0.6.1.tar.gz \
       $2
 
     mv $2/curl-curl-$version_with_dashes $2/source/$1
     cd $2/source/$1
 
-
     ./buildconf
-  else
-    echo "Using release tarball"
-
-    $curr_dirname/download-and-unpack.sh \
-      https://github.com/lwthiker/curl-impersonate/archive/refs/tags/v0.6.1.tar.gz \
-      $2
-
-    mv $2/curl-$1 $2/source/$1
-    cd $2/source/$1
-  fi
 else
   cd $2/source/$1
   if [ -f ./configure ]; then
