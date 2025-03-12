@@ -8,8 +8,9 @@
     # Comma separated list
     'curl_include_dirs%': '',
     'curl_libraries%': '',
-    'curl_static_build%': 'true',
-    'curl_config_bin%': '/build/install/bin/curl-impersonate-chrome-config',
+    'curl_static_build%': 'false',
+    # This could change depending of your curl-impersonate install location depending of your distribution
+    'curl_config_bin%': '/usr/local/bin/curl-impersonate-chrome-config',
     'node_libcurl_no_setlocale%': 'false',
     'node_libcurl_cpp_std%': '<!(node <(module_root_dir)/scripts/cpp-std.js <(node_root_dir))',
     'macos_universal_build%': 'false',
@@ -119,7 +120,8 @@
             ['curl_include_dirs==""', {
               'include_dirs' : [
                 # '<!@(node "<(module_root_dir)/scripts/curl-config.js" --cflags | sed "s/-D.* //g" | sed s/-I//g)'
-                '<!(<(curl_config_bin) --prefix)/include'
+                '<!(<(curl_config_bin) --prefix)/include',
+                'curl-impersonate/build/curl-8.1.1/include/'
               ],
             }],
           ],

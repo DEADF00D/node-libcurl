@@ -3,3 +3,6 @@
 	url = https://github.com/JCMais/curl-for-windows.git
 	ignore = dirty
 	branch = master
+[submodule "curl-impersonate"]
+	path = curl-impersonate
+	url = https://github.com/lwthiker/curl-impersonate.git
