@@ -1,6 +1,6 @@
 {
   "name": "node-libcurl-impersonate-hello",
-  "version": "5.0.0",
+  "version": "6.0.0",
   "description": "The fastest http(s) client (and much more) for Node.js - Node.js bindings for libcurl",
   "keywords": [
     "node-curl",
