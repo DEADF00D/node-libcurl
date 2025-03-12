@@ -5,6 +5,7 @@ npm-debug.log
 examples/cacert*
 wallaby.json
 lib/binding
+deps/output
 
 # docs override
 lib/**/*.doc.ts
