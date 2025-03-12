@@ -50,13 +50,24 @@ libcurl_args=()
 is_less_than_7_54_0=0
 (printf '%s\n%s' "7.54.0" "$1" | $gsort -CV) || is_less_than_7_54_0=$?
 
-echo "Using source"
-$curr_dirname/download-and-unpack.sh \
+if [ ! -d $2/source/$1 ]; then
+  echo "Using source"
+    $curr_dirname/download-and-unpack.sh \
       https://github.com/lwthiker/curl-impersonate/archive/refs/tags/v0.6.1.tar.gz \
       $2
 
-mv $2/curl-impersonate-0.6.1 $2/source/$1
-cd $2/source/$1
+    mv $2/curl-impersonate-0.6.1 $2/source/$1
+    cd $2/source/$1
+
+    # ./buildconf
+else
+  cd $2/source/$1
+  if [ -f ./configure ]; then
+    make distclean || true;
+  else
+    ./buildconf
+  fi
+fi
 
 #   https://github.com/curl/curl/pull/1427#issuecomment-295783852
 # The detection for ldl was broken for libcurl < 7.54.1
@@ -144,8 +155,8 @@ if [ ! -z "$KERBEROS_BUILD_FOLDER" ]; then
     # libcurl only links against -lgssapi_krb5 -lkrb5 -lk5crypto -lcom_err
     LIBS="-lkrb5support -lresolv $LIBS"
   fi
-  
-  
+
+
 elif [ ! -z "$HEIMDAL_BUILD_FOLDER" ]; then
 
   libcurl_args+=("--with-gssapi=$HEIMDAL_BUILD_FOLDER")
@@ -261,6 +272,6 @@ sudo make chrome-install
 #    --prefix=$build_folder \
 #    "${libcurl_args[@]}" \
 #    "${@:3}"
-    
+
 # Release - Both
 # make && make install

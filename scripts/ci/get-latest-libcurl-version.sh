@@ -1,7 +1,7 @@
 #!/bin/bash
 set -eu
 
-git ls-remote --tags https://github.com/lwthiker/curl-impersonate.git \
+git ls-remote --tags https://github.com/curl/curl.git \
   | awk '{print $2}' \
   | grep 'curl-' \
   | grep -v '[0-9][_-][abp]' \
