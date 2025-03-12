@@ -60,16 +60,14 @@ const retrieveConstantList = async ({ url, constantPrefix, blacklist }) => {
           constantName: 'SSL_COMPRESSION',
           constantNameCamelCase: 'sslCompression',
           description: '(curl-impersonate) SSL Compression type. Eg. brotli',
-          url:
-            'https://github.com/lwthiker/curl-impersonate/blob/main/chrome/patches/curl-impersonate.patch#L125',
+          url: 'https://github.com/lwthiker/curl-impersonate/blob/main/chrome/patches/curl-impersonate.patch#L125',
         },
         {
           constantOriginal: 'CURLOPT_SSL_ENABLE_ALPS',
           constantName: 'SSL_ENABLE_ALPS',
           constantNameCamelCase: 'sslEnableAlps',
           description: '(curl-impersonate) TLS Client hello match Extension',
-          url:
-            'https://github.com/lwthiker/curl-impersonate/blob/main/chrome/patches/curl-impersonate.patch#L119',
+          url: 'https://github.com/lwthiker/curl-impersonate/blob/main/chrome/patches/curl-impersonate.patch#L119',
         },
       ],
     )

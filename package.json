@@ -1,6 +1,6 @@
 {
-  "name": "node-libcurl",
-  "version": "4.1.0",
+  "name": "node-libcurl-impersonate-hello",
+  "version": "6.0.0",
   "description": "The fastest http(s) client (and much more) for Node.js - Node.js bindings for libcurl",
   "keywords": [
     "node-curl",
@@ -11,13 +11,13 @@
     "request",
     "curl-impersonate"
   ],
-  "homepage": "https://github.com/SwapnilSoni1999/node-libcurl",
+  "homepage": "https://github.com/DEADF00D/node-libcurl",
   "bugs": {
-    "url": "https://github.com/SwapnilSoni1999/node-libcurl/issues"
+    "url": "https://github.com/DEADF00D/node-libcurl/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git://github.com/SwapnilSoni1999/node-libcurl.git"
+    "url": "git://github.com/DEADF00D/node-libcurl.git"
   },
   "license": "MIT",
   "author": "Jonathan Cardoso <me@jonathancardoso.com>",
@@ -29,6 +29,7 @@
     "dist",
     "scripts",
     "src",
+    "examples/chrome-impersonate.js",
     "LIBCURL_VERSION_WIN_DEPS"
   ],
   "binary": {
@@ -51,7 +52,7 @@
     "gen:compile_commands:debug": "yarn pregyp -- configure --debug -- --format=\"gyp.generator.compile_commands_json.py\"",
     "gen:compile_commands:release": "yarn pregyp -- configure --release -- --format=\"gyp.generator.compile_commands_json.py\"",
     "gen:constants": "node scripts/build-constants.js",
-    "install": "node-pre-gyp install --fallback-to-build",
+    "install": "./scripts/install.sh",
     "postinstall": "node scripts/postinstall",
     "lint": "eslint lib/ scripts/ test/ examples/",
     "pregyp": "node-pre-gyp",

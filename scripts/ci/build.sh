@@ -83,17 +83,13 @@ PIP=${PIP:-$(command -v pip || command -v pip3)}
 # install setuptools if distutils cannot be imported on python
 $PYTHON -c "import distutils" || $PIP install setuptools
 
-# on gh actions it is including this file for some reason: /usr/local/include/nghttp2/nghttp2.h:55:
-# so we are making sure we remove those so they do not mess with our build
-if [[ -n "$CI" && "$(uname)" == "Darwin" && -d "/usr/local/include" ]]; then
-  echo "include folder:"
-  ls -al /usr/local/include
-  echo "lib folder:"
-  ls -al /usr/local/lib
-  # delete all libraries we are building on this file from /usr/local/lib
-  rm -rf /usr/local/include/{nghttp2,openssl,curl}
-  rm -rf     /usr/local/lib/{nghttp2,openssl,curl}
-fi
+echo "include folder:"
+ls -al /usr/local/include
+echo "lib folder:"
+ls -al /usr/local/lib
+# delete all libraries we are building on this file from /usr/local/lib
+rm -rf /usr/local/include/{nghttp2,openssl,curl}
+rm -rf /usr/local/lib/{nghttp2,openssl,curl}
 
 # check for some common missing deps
 if [ "$(uname)" == "Darwin" ]; then
@@ -117,199 +113,25 @@ if [ "$(uname)" == "Darwin" ]; then
   fi
 fi
 
-# The following two, libunistring and libidn2, are only necessary if building libcurl >= 7.53
-# However we are going to build then anyway, they are not that slow to build.
+echo "Using source"
+$curr_dirname/download-and-unpack.sh \
+      https://github.com/lwthiker/curl-impersonate/archive/refs/tags/v0.6.1.tar.gz \
+      deps/libcurlimpersonate
 
-###################
-# Build cares
-###################
-# c-ares is disabled at the moment due to this: https://github.com/JCMais/node-libcurl/issues/280
-# CARES_RELEASE=${CARES_RELEASE:-$(node -e "console.log(process.versions.ares || '1.16.1')")}
-# CARES_DEST_FOLDER=$PREFIX_DIR/deps/cares
-# echo "Building cares v$CARES_RELEASE"
-# ./scripts/ci/build-cares.sh $CARES_RELEASE $CARES_DEST_FOLDER >$LOGS_FOLDER/build-cares.log 2>&1
-# export CARES_BUILD_FOLDER=$CARES_DEST_FOLDER/build/$CARES_RELEASE
-# ls -al $CARES_BUILD_FOLDER/lib
+cd deps/libcurlimpersonate/curl-impersonate-0.6.1
 
-###################
-# Build libunistring
-###################
-LIBUNISTRING_RELEASE=${LIBUNISTRING_RELEASE:-0.9.10}
-LIBUNISTRING_DEST_FOLDER=$PREFIX_DIR/deps/libunistring
-echo "Building libunistring v$LIBUNISTRING_RELEASE"
-./scripts/ci/build-libunistring.sh $LIBUNISTRING_RELEASE $LIBUNISTRING_DEST_FOLDER >$LOGS_FOLDER/build-libunistring.log 2>&1
-export LIBUNISTRING_BUILD_FOLDER=$LIBUNISTRING_DEST_FOLDER/build/$LIBUNISTRING_RELEASE
-ls -al $LIBUNISTRING_BUILD_FOLDER/lib
+mkdir build && cd build
+../configure
+# Build and install the Chrome version
+make chrome-build
+sudo make chrome-install
 
-###################
-# Build libidn2
-###################
-LIBIDN2_RELEASE=${LIBIDN2_RELEASE:-2.1.1}
-LIBIDN2_DEST_FOLDER=$PREFIX_DIR/deps/libidn2
-./scripts/ci/build-libidn2.sh $LIBIDN2_RELEASE $LIBIDN2_DEST_FOLDER >$LOGS_FOLDER/build-libidn2.log 2>&1
-export LIBIDN2_BUILD_FOLDER=$LIBIDN2_DEST_FOLDER/build/$LIBIDN2_RELEASE
-ls -al $LIBIDN2_BUILD_FOLDER/lib
-
-###################
-# Build OpenSSL
-###################
-# OpenSSL version must match Node.js one
-OPENSSL_RELEASE=${OPENSSL_RELEASE:-$(node -e "console.log(process.versions.openssl.replace('+quic', ''))")}
-OPENSSL_DEST_FOLDER=$PREFIX_DIR/deps/openssl
-
-# We must pass KERNEL_BITS=64 on macOS to make sure a x86_64 lib is built, the default is to build an i386 one
-if [ "$(uname)" == "Darwin" ]; then
-  export KERNEL_BITS=64
-fi
-# no-async is required on alpine
-openssl_params=()
-if [[ -f /etc/alpine-release ]]; then
-    openssl_params+=(no-async)
-fi
-echo "Building openssl v$OPENSSL_RELEASE"
-# Weird concatenation of the array with itself is needed
-#  because on bash <= 4, using [@] to access an array with 0 elements
-#  gives an error with set -o pipefail
-./scripts/ci/build-openssl.sh $OPENSSL_RELEASE $OPENSSL_DEST_FOLDER ${openssl_params+"${openssl_params[@]}"} >$LOGS_FOLDER/build-openssl.log 2>&1
-export OPENSSL_BUILD_FOLDER=$OPENSSL_DEST_FOLDER/build/$OPENSSL_RELEASE
-ls -al $OPENSSL_BUILD_FOLDER/lib*
-unset KERNEL_BITS
-
-###################
-# Build nghttp2
-###################
-# nghttp2 version must match Node.js one
-export NGHTTP2_RELEASE=${NGHTTP2_RELEASE:-$(node -e "console.log(process.versions.nghttp2)")}
-NGHTTP2_DEST_FOLDER=$PREFIX_DIR/deps/nghttp2
-echo "Building nghttp2 v$NGHTTP2_RELEASE"
-./scripts/ci/build-nghttp2.sh $NGHTTP2_RELEASE $NGHTTP2_DEST_FOLDER >$LOGS_FOLDER/build-nghttp2.log 2>&1
-export NGHTTP2_BUILD_FOLDER=$NGHTTP2_DEST_FOLDER/build/$NGHTTP2_RELEASE
-ls -al $NGHTTP2_BUILD_FOLDER/lib
-
-###################
-# Build GSS API Lib
-###################
-
-if [ "$HAS_GSS_API" == "1" ]; then
-
-  if [ "$GSS_LIBRARY" == "kerberos" ]; then
-
-    ###################
-    # Build MIT Kerberos
-    ###################
-    KERBEROS_RELEASE=${KERBEROS_RELEASE:-1.17}
-    KERBEROS_DEST_FOLDER=$PREFIX_DIR/deps/kerberos
-    echo "Building kerberos v$KERBEROS_RELEASE"
-    ./scripts/ci/build-kerberos.sh $KERBEROS_RELEASE $KERBEROS_DEST_FOLDER >$LOGS_FOLDER/build-kerberos.log 2>&1
-    export KERBEROS_BUILD_FOLDER=$KERBEROS_DEST_FOLDER/build/$KERBEROS_RELEASE
-    ls -al $KERBEROS_BUILD_FOLDER/lib
-
-  elif [ "$GSS_LIBRARY" == "heimdal" ]; then
-
-    ###################
-    # Build ncurses (dep of heimdal)
-    ###################
-    NCURSES_RELEASE=${NCURSES_RELEASE:-6.1}
-    NCURSES_DEST_FOLDER=$PREFIX_DIR/deps/ncurses
-    echo "Building ncurses v$NCURSES_RELEASE"
-    ./scripts/ci/build-ncurses.sh $NCURSES_RELEASE $NCURSES_DEST_FOLDER >$LOGS_FOLDER/build-ncurses.log 2>&1
-    export NCURSES_BUILD_FOLDER=$NCURSES_DEST_FOLDER/build/$NCURSES_RELEASE
-    ls -al $NCURSES_BUILD_FOLDER/lib
-
-    ###################
-    # Build heimdal
-    ###################
-    HEIMDAL_RELEASE=${HEIMDAL_RELEASE:-7.5.0}
-    HEIMDAL_DEST_FOLDER=$PREFIX_DIR/deps/heimdal
-    echo "Building heimdal v$HEIMDAL_RELEASE"
-    ./scripts/ci/build-heimdal.sh $HEIMDAL_RELEASE $HEIMDAL_DEST_FOLDER >$LOGS_FOLDER/build-heimdal.log 2>&1
-    export HEIMDAL_BUILD_FOLDER=$HEIMDAL_DEST_FOLDER/build/$HEIMDAL_RELEASE
-    ls -al $HEIMDAL_BUILD_FOLDER/lib
-  fi
-fi
-
-###################
-# Build brotli
-###################
-# Brotli version must match Node.js one
-# But brotli only started being shipped with Node 12
-BROTLI_NODEJS=$(node -e "console.log(process.versions.brotli || '')")
-BROTLI_DEFAULT_RELEASE=${BROTLI_NODEJS:-1.0.7}
-BROTLI_RELEASE=${BROTLI_RELEASE:-$BROTLI_DEFAULT_RELEASE}
-BROTLI_DEST_FOLDER=$PREFIX_DIR/deps/brotli
-echo "Building brotli v$BROTLI_RELEASE"
-./scripts/ci/build-brotli.sh $BROTLI_RELEASE $BROTLI_DEST_FOLDER >$LOGS_FOLDER/build-brotli.log 2>&1
-export BROTLI_BUILD_FOLDER=$BROTLI_DEST_FOLDER/build/$BROTLI_RELEASE
-ls -al $BROTLI_BUILD_FOLDER/lib
-
-###################
-# Build zlib
-###################
-# Zlib version must match Node.js one
-ZLIB_RELEASE=${ZLIB_RELEASE:-$(node -e "console.log(process.versions.zlib)")}
-ZLIB_DEST_FOLDER=$PREFIX_DIR/deps/zlib
-echo "Building zlib v$ZLIB_RELEASE"
-./scripts/ci/build-zlib.sh $ZLIB_RELEASE $ZLIB_DEST_FOLDER >$LOGS_FOLDER/build-zlib.log 2>&1
-export ZLIB_BUILD_FOLDER=$ZLIB_DEST_FOLDER/build/$ZLIB_RELEASE
-ls -al $ZLIB_BUILD_FOLDER/lib
-
-###################
-# Build zstd
-###################
-# We could build this only if libcurl version >= 7.72
-ZSTD_RELEASE=${ZSTD_RELEASE:-1.4.9}
-ZSTD_DEST_FOLDER=$PREFIX_DIR/deps/zstd
-echo "Building zstd v$ZSTD_RELEASE"
-./scripts/ci/build-zstd.sh $ZSTD_RELEASE $ZSTD_DEST_FOLDER >$LOGS_FOLDER/build-zstd.log 2>&1
-export ZSTD_BUILD_FOLDER=$ZSTD_DEST_FOLDER/build/$ZSTD_RELEASE
-ls -al $ZSTD_BUILD_FOLDER/lib
-
-###################
-# Build libssh2
-###################
-LIBSSH2_RELEASE=${LIBSSH2_RELEASE:-1.10.0}
-LIBSSH2_DEST_FOLDER=$PREFIX_DIR/deps/libssh2
-echo "Building libssh2 v$LIBSSH2_RELEASE"
-./scripts/ci/build-libssh2.sh $LIBSSH2_RELEASE $LIBSSH2_DEST_FOLDER >$LOGS_FOLDER/build-libssh2.log 2>&1
-export LIBSSH2_BUILD_FOLDER=$LIBSSH2_DEST_FOLDER/build/$LIBSSH2_RELEASE
-ls -al $LIBSSH2_BUILD_FOLDER/lib
-
-###################
-# Build openldap
-###################
-OPENLDAP_RELEASE=${OPENLDAP_RELEASE:-2.6.9}
-OPENLDAP_DEST_FOLDER=$PREFIX_DIR/deps/openldap
-echo "Building openldap v$OPENLDAP_RELEASE"
-./scripts/ci/build-openldap.sh $OPENLDAP_RELEASE $OPENLDAP_DEST_FOLDER >$LOGS_FOLDER/build-openldap.log 2>&1
-export OPENLDAP_BUILD_FOLDER=$OPENLDAP_DEST_FOLDER/build/$OPENLDAP_RELEASE
-ls -al $OPENLDAP_BUILD_FOLDER/lib
-
-###################
-# Build libcurl
-###################
-LIBCURL_ORIGINAL_RELEASE=${LIBCURL_RELEASE:-LATEST}
-LATEST_LIBCURL_RELEASE=${LATEST_LIBCURL_RELEASE:-$(./scripts/ci/get-latest-libcurl-version.sh)}
-LIBCURL_RELEASE=$LIBCURL_ORIGINAL_RELEASE
-if [[ $LIBCURL_RELEASE == "LATEST" ]]; then
-  LIBCURL_RELEASE=$LATEST_LIBCURL_RELEASE
-fi
-LIBCURL_DEST_FOLDER=$PREFIX_DIR/deps/libcurl
-echo "Building libcurl v$LIBCURL_RELEASE - Latest is v$LATEST_LIBCURL_RELEASE"
-./scripts/ci/build-libcurl.sh $LIBCURL_RELEASE $LIBCURL_DEST_FOLDER || (echo "libcurl failed build log:" && cat_slower $LIBCURL_DEST_FOLDER/source/$LIBCURL_RELEASE/config.log && exit 1)
-echo "libcurl successful build log:"
-cat_slower $LIBCURL_DEST_FOLDER/source/$LIBCURL_RELEASE/config.log
-
-export LIBCURL_BUILD_FOLDER=$LIBCURL_DEST_FOLDER/build/$LIBCURL_RELEASE
-ls -al $LIBCURL_BUILD_FOLDER/lib
-export PATH=$LIBCURL_DEST_FOLDER/build/$LIBCURL_RELEASE/bin:$PATH
-export LIBCURL_RELEASE=$LIBCURL_RELEASE
-
-curl --version
-curl-config --version
-curl-config --libs
-curl-config --static-libs
-curl-config --prefix
-curl-config --cflags
+curl_chrome116 --version
+curl-impersonate-chrome-config --version
+curl-impersonate-chrome-config --libs
+curl-impersonate-chrome-config --static-libs
+curl-impersonate-chrome-config --prefix
+curl-impersonate-chrome-config --cflags
 
 # Some vars we will need below
 DISPLAY=${DISPLAY:-}
