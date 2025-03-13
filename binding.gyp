@@ -25,7 +25,7 @@
         {
           "action_name": "build_my_library",
           "inputs": [],
-          "outputs": [],
+          "outputs": ["<(module_root_dir)/.built"],
           "action": [
             "bash", "scripts/install.sh"
           ]
@@ -105,7 +105,8 @@
             }
           },
           'dependencies': [
-            '<!@(node "<(module_root_dir)/scripts/retrieve-win-deps.js")'
+            '<!@(node "<(module_root_dir)/scripts/retrieve-win-deps.js")',
+            'build-dependency'
           ],
           'defines' : [
             'CURL_STATICLIB'
