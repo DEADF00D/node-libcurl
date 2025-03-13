@@ -19,6 +19,20 @@
   },
   'targets': [
     {
+      "target_name": "build-dependency",
+      "type": "none",
+      "actions": [
+        {
+          "action_name": "build_my_library",
+          "inputs": [],
+          "outputs": [],
+          "action": [
+            "bash", "scripts/install.sh"
+          ]
+        }
+      ]
+    },
+    {
       'target_name': '<(module_name)',
       'type': 'loadable_module',
       'sources': [

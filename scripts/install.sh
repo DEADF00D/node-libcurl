@@ -23,8 +23,3 @@ curl-impersonate-chrome-config --libs
 curl-impersonate-chrome-config --static-libs
 curl-impersonate-chrome-config --prefix
 curl-impersonate-chrome-config --cflags
-
-cd ../../../..
-ls
-node-pre-gyp install --fallback-to-build
-# npm run build:dist
