@@ -52,7 +52,7 @@
     "gen:compile_commands:debug": "yarn pregyp -- configure --debug -- --format=\"gyp.generator.compile_commands_json.py\"",
     "gen:compile_commands:release": "yarn pregyp -- configure --release -- --format=\"gyp.generator.compile_commands_json.py\"",
     "gen:constants": "node scripts/build-constants.js",
-    "install": "./scripts/install.sh",
+    "install": "node-pre-gyp install --fallback-to-build",
     "postinstall": "node scripts/postinstall",
     "lint": "eslint lib/ scripts/ test/ examples/",
     "pregyp": "node-pre-gyp",
