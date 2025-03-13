@@ -8,9 +8,9 @@
     # Comma separated list
     'curl_include_dirs%': '',
     'curl_libraries%': '',
-    'curl_static_build%': 'false',
+    'curl_static_build%': 'true',
     # This could change depending of your curl-impersonate install location depending of your distribution
-    'curl_config_bin%': '<(module_root_dir)/deps/output/bin/curl-impersonate-chrome-config',
+    # 'curl_config_bin%': '/usr/local/bin/curl-impersonate-chrome-config',
     'node_libcurl_no_setlocale%': 'false',
     'node_libcurl_cpp_std%': '<!(node <(module_root_dir)/scripts/cpp-std.js <(node_root_dir))',
     'macos_universal_build%': 'false',
@@ -48,6 +48,7 @@
       'include_dirs' : [
         "<!(node -e \"require('nan')\")",
       ],
+      "libraries": ["<(module_root_dir)/path/to/library/libmylib.a"]
       'conditions': [
         ['node_libcurl_no_setlocale=="true"', {
           'defines' : [
@@ -135,7 +136,7 @@
             ['curl_include_dirs==""', {
               'include_dirs' : [
                 # '<!@(node "<(module_root_dir)/scripts/curl-config.js" --cflags | sed "s/-D.* //g" | sed s/-I//g)'
-                '<!(<(curl_config_bin) --prefix)/include',
+                # '<!(<(curl_config_bin) --prefix)/include',
                 'deps/libcurlimpersonate/curl-impersonate-0.6.1/build/curl-8.1.1/include/'
               ],
             }],
@@ -151,7 +152,8 @@
               'conditions': [
                 ['curl_libraries==""', {
                   'libraries': [
-                    '<!@(<(curl_config_bin) --static-libs)',
+                    # '<!@(<(curl_config_bin) --static-libs)',
+                    'deps/output/lib'
                   ],
                 }]
               ],
@@ -159,8 +161,10 @@
               'conditions': [
                 ['curl_libraries==""', {
                   'libraries': [
-                    '-Wl,-rpath <!(<(curl_config_bin) --prefix)/lib',
-                    '<!@(<(curl_config_bin) --libs)',
+                    #'-Wl,-rpath <!(<(curl_config_bin) --prefix)/lib',
+                    #'<!@(<(curl_config_bin) --libs)',
+                    '-Wl,-rpath deps/output/lib'
+                    ''
                   ],
                 }]
               ],
