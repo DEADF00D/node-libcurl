@@ -48,7 +48,7 @@
       'include_dirs' : [
         "<!(node -e \"require('nan')\")",
       ],
-      "libraries": ["<(module_root_dir)/path/to/library/libmylib.a"]
+      "libraries": ["<(module_root_dir)/deps/output/lib/libcurl-impersonate-chrome.a"]
       'conditions': [
         ['node_libcurl_no_setlocale=="true"', {
           'defines' : [
