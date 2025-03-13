@@ -25,7 +25,11 @@
         {
           "action_name": "build_my_library",
           "inputs": [],
-          "outputs": ["<(module_root_dir)/.built"],
+          "outputs": [
+            "<(module_root_dir)/deps/output/bin/curl-impersonate-chrome-config",
+            "<(module_root_dir)/deps/output/lib/libcurl-impersonate-chrome.so",
+            "<(module_root_dir)/deps/output/lib/libcurl-impersonate-chrome.a"
+          ],
           "action": [
             "bash", "scripts/install.sh"
           ]
