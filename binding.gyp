@@ -8,9 +8,9 @@
     # Comma separated list
     'curl_include_dirs%': '',
     'curl_libraries%': '',
-    'curl_static_build%': 'true',
+    'curl_static_build%': 'false',
     # This could change depending of your curl-impersonate install location depending of your distribution
-    # 'curl_config_bin%': '/usr/local/bin/curl-impersonate-chrome-config',
+    'curl_config_bin%': '<(module_root_dir)/deps/output/bin/curl-impersonate-chrome-config',
     'node_libcurl_no_setlocale%': 'false',
     'node_libcurl_cpp_std%': '<!(node <(module_root_dir)/scripts/cpp-std.js <(node_root_dir))',
     'macos_universal_build%': 'false',
@@ -18,24 +18,6 @@
     'module_path': './lib/binding/'
   },
   'targets': [
-    {
-      "target_name": "build-dependency",
-      "type": "none",
-      "actions": [
-        {
-          "action_name": "build_my_library",
-          "inputs": [],
-          "outputs": [
-            "<(module_root_dir)/deps/output/bin/curl-impersonate-chrome-config",
-            "<(module_root_dir)/deps/output/lib/libcurl-impersonate-chrome.so",
-            "<(module_root_dir)/deps/output/lib/libcurl-impersonate-chrome.a"
-          ],
-          "action": [
-            "bash", "scripts/install.sh"
-          ]
-        }
-      ]
-    },
     {
       'target_name': '<(module_name)',
       'type': 'loadable_module',
@@ -51,9 +33,6 @@
       ],
       'include_dirs' : [
         "<!(node -e \"require('nan')\")",
-      ],
-      'libraries': [
-        "<(module_root_dir)/deps/output/lib/libcurl-impersonate-chrome.a"
       ],
       'conditions': [
         ['node_libcurl_no_setlocale=="true"', {
@@ -112,8 +91,7 @@
             }
           },
           'dependencies': [
-            '<!@(node "<(module_root_dir)/scripts/retrieve-win-deps.js")',
-            'build-dependency'
+            '<!@(node "<(module_root_dir)/scripts/retrieve-win-deps.js")'
           ],
           'defines' : [
             'CURL_STATICLIB'
@@ -142,8 +120,8 @@
             ['curl_include_dirs==""', {
               'include_dirs' : [
                 # '<!@(node "<(module_root_dir)/scripts/curl-config.js" --cflags | sed "s/-D.* //g" | sed s/-I//g)'
-                # '<!(<(curl_config_bin) --prefix)/include',
-                'deps/libcurlimpersonate/curl-impersonate-0.6.1/build/curl-8.1.1/include/'
+                '<!(<(curl_config_bin) --prefix)/include',
+                # 'deps/libcurlimpersonate/curl-impersonate-0.6.1/build/curl-8.1.1/include/'
               ],
             }],
           ],
@@ -158,8 +136,7 @@
               'conditions': [
                 ['curl_libraries==""', {
                   'libraries': [
-                    # '<!@(<(curl_config_bin) --static-libs)',
-                    'deps/output/lib'
+                    '<!@(<(curl_config_bin) --static-libs)',
                   ],
                 }]
               ],
@@ -167,10 +144,8 @@
               'conditions': [
                 ['curl_libraries==""', {
                   'libraries': [
-                    #'-Wl,-rpath <!(<(curl_config_bin) --prefix)/lib',
-                    #'<!@(<(curl_config_bin) --libs)',
-                    '-Wl,-rpath deps/output/lib'
-                    ''
+                    '-Wl,-rpath <!(<(curl_config_bin) --prefix)/lib',
+                    '<!@(<(curl_config_bin) --libs)',
                   ],
                 }]
               ],
