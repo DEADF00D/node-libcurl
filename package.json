@@ -30,6 +30,7 @@
     "scripts",
     "src",
     "examples/chrome-impersonate.js",
+    "deps/curl-impersonate/",
     "LIBCURL_VERSION_WIN_DEPS"
   ],
   "binary": {
